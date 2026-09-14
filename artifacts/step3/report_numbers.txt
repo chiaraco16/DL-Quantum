@@ -1,0 +1,105 @@
+==========================================================================
+ DL-QUANTUM -- PROSPETTO DEI RISULTATI
+ Fonte: results_full.json + ablation_full.json + step2_summary.json
+==========================================================================
+
+CONFIGURAZIONE
+  schedule (epoche)............. 6+6+3  (= 15 epoche)
+  finestre temporali L.......... 50, 100
+  fold cross-validation......... 5
+  origini rollout............... 0, 250, 500
+  mask_prob / ss_passes......... 0.15 / 3
+  seed / determinismo........... 42 / enabled
+  config HP (RNN / Tr).......... 4 / 4
+  addestramenti di CV........... 80  (4+4 config x 2 finestre x 5 fold)
+  addestramenti finali.......... 4  (miglior config per famiglia e finestra)
+
+--------------------------------------------------------------------------
+ FINESTRA L = 50
+--------------------------------------------------------------------------
+  miglior baseline banale....... train_mean   rollout RMSE 0.0279   NRMSE 0.597
+
+  [RNN]  best config: R2
+  CV  rollout RMSE +/- IC95..... 0.0372 +/- 0.0006
+  TEST rollout RMSE (fis.)...... 0.0376
+  TEST next-step RMSE........... 0.1402
+  TEST NRMSE.................... 0.804
+  TEST skill vs baseline........ -0.341
+  TEST RMSE mag / corr.......... 0.0353 / 0.0381
+  errore rollout 1o / ultimo passo.. 0.00299 -> 0.03971  (fattore 13.3)
+  significativita' best vs 2o....... R2 vs R4: SIGNIFICATIVO (IC disgiunti)
+
+  [Transformer]  best config: T4
+  CV  rollout RMSE +/- IC95..... 0.0384 +/- 0.0014
+  TEST rollout RMSE (fis.)...... 0.0369
+  TEST next-step RMSE........... 0.1727
+  TEST NRMSE.................... 0.787
+  TEST skill vs baseline........ -0.314
+  TEST RMSE mag / corr.......... 0.0350 / 0.0373
+  errore rollout 1o / ultimo passo.. 0.00546 -> 0.03298  (fattore 6.0)
+  significativita' best vs 2o....... T4 vs T2: NON significativo (IC sovrapposti)
+    nota selezione.................. IC sovrapposti fra T2, T1, T4, T3; spareggio sul next-step RMSE: scelta T4 (migliore media di rollout: T2)
+
+  modello migliore.............. Transformer
+  battono il miglior baseline... nessuna delle due
+
+--------------------------------------------------------------------------
+ FINESTRA L = 100
+--------------------------------------------------------------------------
+  miglior baseline banale....... context_mean   rollout RMSE 0.0251   NRMSE 0.536
+
+  [RNN]  best config: R2
+  CV  rollout RMSE +/- IC95..... 0.0368 +/- 0.0005
+  TEST rollout RMSE (fis.)...... 0.0369
+  TEST next-step RMSE........... 0.1736
+  TEST NRMSE.................... 0.786
+  TEST skill vs baseline........ -0.454
+  TEST RMSE mag / corr.......... 0.0349 / 0.0373
+  errore rollout 1o / ultimo passo.. 0.00444 -> 0.03811  (fattore 8.6)
+  significativita' best vs 2o....... R2 vs R4: SIGNIFICATIVO (IC disgiunti)
+
+  [Transformer]  best config: T3
+  CV  rollout RMSE +/- IC95..... 0.0367 +/- 0.0023
+  TEST rollout RMSE (fis.)...... 0.0373
+  TEST next-step RMSE........... 0.2232
+  TEST NRMSE.................... 0.794
+  TEST skill vs baseline........ -0.468
+  TEST RMSE mag / corr.......... 0.0381 / 0.0371
+  errore rollout 1o / ultimo passo.. 0.00787 -> 0.03965  (fattore 5.0)
+  significativita' best vs 2o....... T3 vs T1: NON significativo (IC sovrapposti)
+    nota selezione.................. IC sovrapposti fra T1, T2, T4, T3; spareggio sul next-step RMSE: scelta T3 (migliore media di rollout: T1)
+
+  modello migliore.............. RNN
+  battono il miglior baseline... nessuna delle due
+
+==========================================================================
+  MIGLIORE ASSOLUTO............. Transformer a L=50  rollout RMSE 0.0369
+  verdetto complessivo.......... nessun modello appreso supera il miglior predittore banale
+==========================================================================
+
+--------------------------------------------------------------------------
+ ABLATION DELLO SCHEDULE  (L = 50, 15 epoche, budget costante)
+--------------------------------------------------------------------------
+
+  [RNN]  best variante: TF + MM reconstruct + SS (3 passes)
+  TF only............................. rollout 0.0431 +/- 0.0010   next-step 0.1156
+  TF + MM............................. rollout 0.0531 +/- 0.0008   next-step 0.2696
+  TF + MM + SS (1 pass)............... rollout 0.0382 +/- 0.0009   next-step 0.1443
+  TF + MM + SS (3 passes)............. rollout 0.0372 +/- 0.0006   next-step 0.1447
+  TF + MM reconstruct + SS (3 passes). rollout 0.0371 +/- 0.0004   next-step 0.1333  <== best
+    guadagno best vs 'TF only'........ 0.00591  (IC disgiunti: differenza significativa)
+
+  [Transformer]  best variante: TF + MM reconstruct + SS (3 passes)
+  TF only............................. rollout 0.0392 +/- 0.0028   next-step 0.1503
+  TF + MM............................. rollout 0.0381 +/- 0.0007   next-step 0.1797
+  TF + MM + SS (1 pass)............... rollout 0.0385 +/- 0.0016   next-step 0.1707
+  TF + MM + SS (3 passes)............. rollout 0.0384 +/- 0.0014   next-step 0.1736
+  TF + MM reconstruct + SS (3 passes). rollout 0.0377 +/- 0.0015   next-step 0.1698  <== best
+    guadagno best vs 'TF only'........ 0.00154  (IC sovrapposti: differenza non significativa)
+
+--------------------------------------------------------------------------
+ RUN DIMOSTRATIVA DELLO STEP 2  (singolo addestramento, senza cross-validation)
+--------------------------------------------------------------------------
+  RNN: params............... 34295   next 0.1402   rollout 0.0376   NRMSE 0.804   skill -0.341
+  Transformer: params....... 173559   next 0.1727   rollout 0.0369   NRMSE 0.787   skill -0.314
+

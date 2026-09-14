@@ -1,0 +1,20 @@
+% richiede \usepackage{booktabs}
+\begin{table}[t]\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Ablation of the multi-regime schedule at constant budget (15 epochs, $L=50$, mean $\pm$ 95\% CI). TF = teacher forcing, MM = masked modeling, SS = scheduled sampling.}
+\label{tab:ablation}
+\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{RNN} & \multicolumn{2}{c}{TRANSFORMER} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Training schedule & Next-step RMSE & Rollout RMSE (phys) & Next-step RMSE & Rollout RMSE (phys) \\
+\midrule
+TF only & 0.1156 $\pm$ 0.0019 & 0.0431 $\pm$ 0.0010 & 0.1503 $\pm$ 0.0028 & 0.0392 $\pm$ 0.0028 \\
+TF + MM & 0.2696 $\pm$ 0.0018 & 0.0531 $\pm$ 0.0008 & 0.1797 $\pm$ 0.0010 & 0.0381 $\pm$ 0.0007 \\
+TF + MM + SS (1 pass) & 0.1443 $\pm$ 0.0023 & 0.0382 $\pm$ 0.0009 & 0.1707 $\pm$ 0.0016 & 0.0385 $\pm$ 0.0016 \\
+TF + MM + SS (3 passes) & 0.1447 $\pm$ 0.0024 & 0.0372 $\pm$ 0.0006 & 0.1736 $\pm$ 0.0022 & 0.0384 $\pm$ 0.0014 \\
+TF + MM reconstruct + SS (3 passes) & 0.1333 $\pm$ 0.0023 & \textbf{0.0371 $\pm$ 0.0004} & 0.1698 $\pm$ 0.0019 & \textbf{0.0377 $\pm$ 0.0015} \\
+\bottomrule
+\end{tabular}}
+\end{table}

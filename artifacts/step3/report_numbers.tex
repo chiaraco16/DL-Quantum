@@ -1,0 +1,121 @@
+% ------------------------------------------------------------------
+% Generated automatically from the result files -- do not edit by hand
+% ------------------------------------------------------------------
+\newcommand{\nFolds}{5}
+\newcommand{\nOrigins}{3}
+\newcommand{\originList}{0, 250, 500}
+\newcommand{\nConfigRnn}{4}
+\newcommand{\nConfigTr}{4}
+\newcommand{\nWindows}{2}
+\newcommand{\nRuns}{80}
+\newcommand{\windowList}{$L=50$ and $L=100$}
+\newcommand{\scheduleStr}{\ensuremath{6{+}6{+}3}}
+\newcommand{\nEpochs}{15}
+\newcommand{\ssPasses}{3}
+\newcommand{\maskProb}{\ensuremath{0.15}}
+\newcommand{\reproStatus}{enabled}
+% ---- results for time window L=50 ----
+\newcommand{\windowA}{50}
+\newcommand{\blBestA}{train-mean}
+\newcommand{\blBestRmseA}{\ensuremath{0.0279}}
+\newcommand{\blBestNrmseA}{\ensuremath{0.597}}
+\newcommand{\bestRnnA}{R2}
+\newcommand{\cvRnnRmseA}{\ensuremath{0.0372}}
+\newcommand{\cvRnnCiA}{\ensuremath{0.0006}}
+\newcommand{\testRnnRmseA}{\ensuremath{0.0376}}
+\newcommand{\testRnnNrmseA}{\ensuremath{0.804}}
+\newcommand{\testRnnSkillA}{\ensuremath{-0.341}}
+\newcommand{\testRnnNextA}{\ensuremath{0.1402}}
+\newcommand{\testRnnMagA}{\ensuremath{0.0353}}
+\newcommand{\testRnnCorrA}{\ensuremath{0.0381}}
+\newcommand{\signifRnnA}{statistically significant}
+\newcommand{\runnerUpRnnA}{R4}
+\newcommand{\leaderRnnA}{R2}
+\newcommand{\tieBreakRnnA}{first on mean rollout error as well}
+\newcommand{\errRnnFirstA}{\ensuremath{0.00299}}
+\newcommand{\errRnnLastA}{\ensuremath{0.03971}}
+\newcommand{\errRnnGrowthA}{\ensuremath{13.3}}
+\newcommand{\bestTrA}{T4}
+\newcommand{\cvTrRmseA}{\ensuremath{0.0384}}
+\newcommand{\cvTrCiA}{\ensuremath{0.0014}}
+\newcommand{\testTrRmseA}{\ensuremath{0.0369}}
+\newcommand{\testTrNrmseA}{\ensuremath{0.787}}
+\newcommand{\testTrSkillA}{\ensuremath{-0.314}}
+\newcommand{\testTrNextA}{\ensuremath{0.1727}}
+\newcommand{\testTrMagA}{\ensuremath{0.0350}}
+\newcommand{\testTrCorrA}{\ensuremath{0.0373}}
+\newcommand{\signifTrA}{\emph{not} statistically significant}
+\newcommand{\runnerUpTrA}{T2}
+\newcommand{\leaderTrA}{T2}
+\newcommand{\tieBreakTrA}{selected by the next-step RMSE tie-break among configurations with overlapping intervals}
+\newcommand{\errTrFirstA}{\ensuremath{0.00546}}
+\newcommand{\errTrLastA}{\ensuremath{0.03298}}
+\newcommand{\errTrGrowthA}{\ensuremath{6.0}}
+\newcommand{\winnerA}{the Transformer}
+\newcommand{\beatsBaselineA}{does \emph{not} beat}
+\newcommand{\verdictA}{neither architecture beats the best trivial predictor}
+% ---- results for time window L=100 ----
+\newcommand{\windowB}{100}
+\newcommand{\blBestB}{context-mean}
+\newcommand{\blBestRmseB}{\ensuremath{0.0251}}
+\newcommand{\blBestNrmseB}{\ensuremath{0.536}}
+\newcommand{\bestRnnB}{R2}
+\newcommand{\cvRnnRmseB}{\ensuremath{0.0368}}
+\newcommand{\cvRnnCiB}{\ensuremath{0.0005}}
+\newcommand{\testRnnRmseB}{\ensuremath{0.0369}}
+\newcommand{\testRnnNrmseB}{\ensuremath{0.786}}
+\newcommand{\testRnnSkillB}{\ensuremath{-0.454}}
+\newcommand{\testRnnNextB}{\ensuremath{0.1736}}
+\newcommand{\testRnnMagB}{\ensuremath{0.0349}}
+\newcommand{\testRnnCorrB}{\ensuremath{0.0373}}
+\newcommand{\signifRnnB}{statistically significant}
+\newcommand{\runnerUpRnnB}{R4}
+\newcommand{\leaderRnnB}{R2}
+\newcommand{\tieBreakRnnB}{first on mean rollout error as well}
+\newcommand{\errRnnFirstB}{\ensuremath{0.00444}}
+\newcommand{\errRnnLastB}{\ensuremath{0.03811}}
+\newcommand{\errRnnGrowthB}{\ensuremath{8.6}}
+\newcommand{\bestTrB}{T3}
+\newcommand{\cvTrRmseB}{\ensuremath{0.0367}}
+\newcommand{\cvTrCiB}{\ensuremath{0.0023}}
+\newcommand{\testTrRmseB}{\ensuremath{0.0373}}
+\newcommand{\testTrNrmseB}{\ensuremath{0.794}}
+\newcommand{\testTrSkillB}{\ensuremath{-0.468}}
+\newcommand{\testTrNextB}{\ensuremath{0.2232}}
+\newcommand{\testTrMagB}{\ensuremath{0.0381}}
+\newcommand{\testTrCorrB}{\ensuremath{0.0371}}
+\newcommand{\signifTrB}{\emph{not} statistically significant}
+\newcommand{\runnerUpTrB}{T1}
+\newcommand{\leaderTrB}{T1}
+\newcommand{\tieBreakTrB}{selected by the next-step RMSE tie-break among configurations with overlapping intervals}
+\newcommand{\errTrFirstB}{\ensuremath{0.00787}}
+\newcommand{\errTrLastB}{\ensuremath{0.03965}}
+\newcommand{\errTrGrowthB}{\ensuremath{5.0}}
+\newcommand{\winnerB}{the RNN}
+\newcommand{\beatsBaselineB}{does \emph{not} beat}
+\newcommand{\verdictB}{neither architecture beats the best trivial predictor}
+\newcommand{\bestOverall}{the Transformer}
+\newcommand{\bestOverallWindow}{50}
+\newcommand{\bestOverallRmse}{\ensuremath{0.0369}}
+\newcommand{\nBeatsBaseline}{0}
+\newcommand{\nModelsTotal}{4}
+\newcommand{\verdictBest}{no learned model beats the best trivial predictor}
+% ---- ablation study ----
+\newcommand{\ablWindow}{50}
+\newcommand{\ablEpochs}{15}
+\newcommand{\ablRnnBest}{TF + MM reconstruct + SS (3 passes)}
+\newcommand{\ablRnnBestRmse}{\ensuremath{0.0371}}
+\newcommand{\ablRnnTfMm}{\ensuremath{0.0531}}
+\newcommand{\ablRnnTfOnly}{\ensuremath{0.0431}}
+\newcommand{\ablRnnGain}{\ensuremath{0.00591}}
+\newcommand{\ablRnnHelps}{improves on}
+\newcommand{\ablRnnSignif}{statistically significant}
+\newcommand{\ablRnnVerdict}{\emph{improves} overall performance, with disjoint confidence intervals}
+\newcommand{\ablTrBest}{TF + MM reconstruct + SS (3 passes)}
+\newcommand{\ablTrBestRmse}{\ensuremath{0.0377}}
+\newcommand{\ablTrTfMm}{\ensuremath{0.0381}}
+\newcommand{\ablTrTfOnly}{\ensuremath{0.0392}}
+\newcommand{\ablTrGain}{\ensuremath{0.00154}}
+\newcommand{\ablTrHelps}{improves on}
+\newcommand{\ablTrSignif}{\emph{not} statistically significant}
+\newcommand{\ablTrVerdict}{is \emph{statistically indistinguishable} from the reference configuration: the difference lies within the confidence intervals}

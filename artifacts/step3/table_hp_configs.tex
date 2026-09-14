@@ -1,0 +1,20 @@
+% richiede \usepackage{booktabs, multirow}
+\begin{table}[t]\centering
+\caption{Hyper-parameter configurations: full Cartesian product of the declared domains. Shared by every configuration: Adam, batch $64$, clipnorm $1$, per-feature z-score, schedule $6{+}6{+}3$, windows $L\in\{50,100\}$, $5$-fold CV.}
+\label{tab:hpcfg}
+\begin{tabular}{lll}
+\toprule
+Model & Config & Hyper-parameters \\
+\midrule
+\multirow{4}{*}{RNN} & R1 & LSTM, units $64$, layers $1$, lr $10^{-2}$ \\
+ & R2 & LSTM, units $64$, layers $1$, lr $10^{-3}$ \\
+ & R3 & GRU, units $64$, layers $1$, lr $10^{-2}$ \\
+ & R4 & GRU, units $64$, layers $1$, lr $10^{-3}$ \\
+\midrule
+\multirow{4}{*}{Transformer} & T1 & $d_{\text{model}}\,32$, heads $4$, layers $2$, dff $64$, lr $10^{-2}$ \\
+ & T2 & $d_{\text{model}}\,32$, heads $4$, layers $2$, dff $64$, lr $10^{-3}$ \\
+ & T3 & $d_{\text{model}}\,64$, heads $4$, layers $2$, dff $128$, lr $10^{-2}$ \\
+ & T4 & $d_{\text{model}}\,64$, heads $4$, layers $2$, dff $128$, lr $10^{-3}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
