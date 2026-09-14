@@ -150,19 +150,3 @@ La riproducibilità è garantita attraverso:
 - **Validazione dello scheduled sampling:** `tests/test_scheduled_sampling.py` verifica numericamente la proprietà a punto fisso dello scheduled sampling.
 
 ---
-
-## 📋 Checklist di Esecuzione
-
-- [ ] Setup ambiente e GPU su Colab
-- [ ] Precaricamento dati da Google Drive
-- [ ] Step 1: Preprocessing
-- [ ] Step 2: Training demo
-- [ ] Step 3: Sweep e ablation
-- [ ] Verifica metriche in `artifacts/step3/`
-- [ ] Compilazione documento LaTeX (facoltativo)
-
----
-
-## 📞 Contatti e Note
-
-Per domande sulla metodologia, replicazione degli esperimenti o accesso ai dataset integrali, contattare l'autore.
