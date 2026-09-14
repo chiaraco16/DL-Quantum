@@ -1,42 +1,168 @@
 # DL-Quantum
 
-Progetto di Deep Learning — DL-Quantum
-Autore: Chiara Costantino — Laurea Magistrale in Artificial Intelligence and Data Science
-Previsione delle dinamiche del modello PXP a 10 qubit (55 osservabili: 10 magnetizzazioni + 45 correlazioni) tramite una RNN e un Transformer causale, entrambi costruiti a partire dai soli layer primitivi di Keras e addestrati con un unico training loop multi-regime (teacher forcing + masked modeling + scheduled sampling). Il dataset è costituito da 400 traiettorie simulate di 1001 istanti ciascuna. La riproducibilità è controllata tramite semi fissi e determinismo delle operazioni in TensorFlow: esecuzioni indipendenti ripetute restituiscono metriche identiche e pesi con lo stesso hash MD5 (verificato bit-a-bit su tre run separati).
-Struttura della consegna
-Cartella / file	Contenuto
-DL_Quantum.ipynb	Notebook di orchestrazione: esegue in sequenza tutti gli step su Colab.
-src/	Moduli e script della pipeline.
-tests/	Verifica della riproducibilità e controllo numerico sullo scheduled sampling.
-artifacts/	Output degli esperimenti: EDA, figure, tabelle CSV e LaTeX, JSON dei risultati, pesi dei modelli selezionati e pacchetti di test. Viene rigenerato per intero rieseguendo il notebook.
-report/	Documento finale in PDF (10 pagine), redatto in LaTeX importando tabelle e figure direttamente da artifacts/.
-presentation/	Presentazione del progetto in formato .pptx.
-I pacchetti di test inclusi (test_pack_L50_demo.npz e test_pack_L100_demo.npz, in artifacts/step3/models/) sono un sottoinsieme regolare del test set: i pacchetti integrali pesano 67 MB e sono stati esclusi per contenere la dimensione dell’archivio. Servono a rieseguire la cella di inferenza senza rileggere il CSV — run_inference.py cerca test_pack_L*.npz e ricade automaticamente sulla versione _demo, dichiarandolo a schermo. Le metriche che se ne ricavano non coincidono esattamente con quelle riportate nel documento e negli output salvati del notebook, calcolate sul test set completo; i pacchetti integrali si rigenerano con run_step3_experiments.py. Il dataset grezzo trajectories.csv (~440 MB) non è incluso nel pacchetto: il notebook lo carica da Google Drive nelle prime celle ed è necessario solo per rieseguire da zero lo sweep completo (Step 1–3), non per l’inferenza.
-Dipendenze e ambiente di esecuzione
-Codice in Python 3, pensato per Google Colab con GPU T4. Ambiente di riferimento su cui i risultati sono stati verificati: Python 3.13, NumPy 2.1, TensorFlow 2.20 su singola GPU. Librerie esterne:
-•	tensorflow — architetture (RNN, Transformer), training loop custom, gestione dei tensori;
-•	numpy — calcolo matriciale, metriche, finestre temporali, cache .npz;
-•	pandas — lettura del dataset CSV;
-•	matplotlib — figure di EDA, curve di training e grafici di rollout.
-Moduli della libreria standard usati (nessuna installazione richiesta): os, json, argparse, dataclasses, subprocess, glob, shutil.
-Struttura del codice (src/)
-•	data_preprocessing.py — standardizzazione z-score, finestre temporali, partizionamento per traiettoria (senza data leakage), controlli di integrità ed EDA (inclusa la matrice di correlazione tra osservabili).
-•	models.py — architetture RNN (GRU/LSTM) e Transformer (Model Subclassing con mascheratura causale); salvataggio dei pesi con metadati (save_model_bundle).
-•	training.py — training loop unificato con tf.GradientTape: teacher forcing, masked modeling e scheduled sampling reale basato su iterazione a punto fisso.
-•	experiments.py — sweep degli iperparametri, cross-validation per traiettoria, intervalli di confidenza al 95% con test di significatività, selezione a due stadi (con tie-break) e ablation dello schedule di training.
-•	baselines.py — predittori non parametrici (persistence, drift, context-mean, train-mean) e Forecast Skill Score.
-•	Script di esecuzione (run_*.py):
-–	run_step1_preprocessing.py — controlli di integrità e cache dei tensori;
-–	run_step2_demo.py — addestramento dimostrativo e figure qualitative;
-–	run_step3_experiments.py — sweep completo e ablation;
-–	run_inference.py — inferenza sul test set completo a partire dai modelli salvati e dai pacchetti compressi test_pack_L*.npz, senza rileggere il CSV.
-–	analyze_phase_decay.py — analisi della degradazione del rollout: misura ampiezza e correlazione delle previsioni in funzione dell’orizzonte e distingue il collasso verso la media dalla perdita di fase; scrive phase_analysis.json.
-Numeri dei risultati
-src/dump_report_numbers.py legge i risultati JSON (results_full.json, ablation_full.json, step2_summary.json) e produce report_numbers.txt, un prospetto leggibile di tutte le metriche: configurazione migliore per finestra, RMSE, NRMSE, skill score, intervalli di confidenza, esito dei confronti di significatività, ablation. src/make_report_macros.py produce lo stesso contenuto come macro LaTeX. Servono a controllare riga per riga che le cifre riportate nel documento coincidano con quelle prodotte dall’esperimento.
-Istruzioni di esecuzione (Colab)
-L’orchestrazione degli esperimenti avviene tramite il notebook DL_Quantum.ipynb.
-•	Ordine: eseguire le celle in sequenza, partendo dal setup dell’ambiente e dal pre-caricamento locale dei dati.
-•	Tempi stimati (GPU T4): Step 1 ≈ 2 min · Step 2 ≈ 5 min · Step 3 (sweep completo + ablation) ≈ 60–90 min.
-Il documento è redatto in LaTeX importando le tabelle dei risultati direttamente dai file generati dalla pipeline (artifacts/step3/table1_L50.tex, table1_L100.tex, table_ablation.tex, table_hp_configs.tex) e le figure da artifacts/: nessuna cifra riportata nel testo è digitata a mano, quindi il documento non può divergere dai risultati degli esperimenti. Nel pacchetto è incluso il PDF compilato.
-Riproducibilità
-Tutti i semi sono fissati e il determinismo delle operazioni TensorFlow è abilitato. Lo script tests/verify_reproducibility.py confronta due esecuzioni indipendenti (metriche, Tabella 1 e pesi bit-a-bit); tests/test_scheduled_sampling.py verifica numericamente la proprietà a punto fisso dello scheduled sampling.
+Previsione delle dinamiche del modello PXP mediante Deep Learning
+
+**Autore:** Chiara Costantino  
+**Programma:** Laurea Magistrale in Artificial Intelligence and Data Science
+
+---
+
+## 📋 Descrizione del Progetto
+
+**DL-Quantum** è uno studio di Deep Learning sulla previsione delle dinamiche di un sistema PXP a 10 qubit. Il progetto confronta due architetture neurali—una RNN e un Transformer causale—costruite esclusivamente con layer primitivi di Keras, per la predizione di 55 osservabili (10 magnetizzazioni e 45 correlazioni).
+
+**Caratteristiche principali:**
+- Dataset: 400 traiettorie simulate di 1001 istanti ciascuna
+- Training unificato: teacher forcing + masked modeling + scheduled sampling
+- Riproducibilità verificata: esecuzioni indipendenti restituiscono metriche identiche e pesi con hash MD5 identico (verificato bit-a-bit su tre run separati)
+
+---
+
+## 📁 Struttura del Progetto
+
+| Elemento | Descrizione |
+|----------|-------------|
+| **DL_Quantum.ipynb** | Notebook di orchestrazione che esegue sequenzialmente tutti gli step su Google Colab |
+| **src/** | Moduli Python e script della pipeline di preprocessing, training e inferenza |
+| **tests/** | Suite di test per verificare riproducibilità e validazione numerica dello scheduled sampling |
+| **artifacts/** | Output degli esperimenti: EDA, figure, tabelle (CSV, LaTeX), risultati JSON, pesi dei modelli e pacchetti di test |
+| **report/** | Documento finale (10 pagine) in LaTeX con tabelle e figure importate direttamente da `artifacts/` |
+| **presentation/** | Presentazione del progetto in formato PowerPoint |
+
+### 📦 Pacchetti di Test
+
+I pacchetti di test demo inclusi (`test_pack_L50_demo.npz` e `test_pack_L100_demo.npz`, in `artifacts/step3/models/`) sono sottoinsiemi regolari del test set. I pacchetti integrali (67 MB) sono stati esclusi per contenere la dimensione dell'archivio ma si rigenerano con `run_step3_experiments.py`.
+
+**Nota:** `run_inference.py` rileva automaticamente i pacchetti disponibili e usa la versione `_demo` con una notifica a schermo. Le metriche derivate dai pacchetti demo non coincidono esattamente con quelle del documento (calcolate sul test set completo).
+
+### 📊 Dataset
+
+Il dataset grezzo `trajectories.csv` (~440 MB) non è incluso nel pacchetto: il notebook lo carica da Google Drive nelle prime celle. È necessario solo per rieseguire lo sweep completo da zero (Step 1–3), non per l'inferenza.
+
+---
+
+## ⚙️ Ambiente di Esecuzione
+
+**Linguaggio:** Python 3  
+**Piattaforma consigliata:** Google Colab con GPU T4  
+**Versioni di riferimento:** Python 3.13, NumPy 2.1, TensorFlow 2.20 su singola GPU
+
+### 📦 Dipendenze Esterne
+
+| Libreria | Utilizzo |
+|----------|----------|
+| **TensorFlow** | Architetture (RNN, Transformer), training loop custom, gestione tensori |
+| **NumPy** | Calcolo matriciale, metriche, finestre temporali, cache .npz |
+| **Pandas** | Lettura dataset CSV |
+| **Matplotlib** | Visualizzazione (EDA, curve di training, grafici di rollout) |
+
+**Libreria standard** (nessuna installazione richiesta): `os`, `json`, `argparse`, `dataclasses`, `subprocess`, `glob`, `shutil`
+
+---
+
+## 🏗️ Architettura del Codice
+
+### Moduli Principali (`src/`)
+
+- **`data_preprocessing.py`**  
+  Standardizzazione z-score, sliding windows temporali, partizionamento per traiettoria (senza data leakage), controlli di integrità, EDA e matrice di correlazione tra osservabili.
+
+- **`models.py`**  
+  Architetture RNN (GRU/LSTM) e Transformer con Model Subclassing, mascheratura causale e serializzazione dei pesi con metadati (`save_model_bundle`).
+
+- **`training.py`**  
+  Training loop unificato con `tf.GradientTape`: implementa teacher forcing, masked modeling e scheduled sampling reale basato su iterazione a punto fisso.
+
+- **`experiments.py`**  
+  Hyperparameter sweep, cross-validation per traiettoria, intervalli di confidenza al 95%, test di significatività statistica, selezione a due stadi con tie-break, ablation study sullo schedule di training.
+
+- **`baselines.py`**  
+  Predittori non parametrici (persistence, drift, context-mean, train-mean) e Forecast Skill Score.
+
+### 🚀 Script di Esecuzione
+
+- **`run_step1_preprocessing.py`**  
+  Controlli di integrità e cacheing dei tensori
+
+- **`run_step2_demo.py`**  
+  Training dimostrativo con figure qualitative
+
+- **`run_step3_experiments.py`**  
+  Sweep completo degli iperparametri e ablation study
+
+- **`run_inference.py`**  
+  Inferenza sul test set completo da modelli salvati e pacchetti compressi, senza rileggere il CSV
+
+- **`analyze_phase_decay.py`**  
+  Analisi della degradazione del rollout: ampiezza e correlazione delle previsioni in funzione dell'orizzonte, distinzione tra collasso verso la media e perdita di fase. Output: `phase_analysis.json`
+
+### 📈 Reportistica
+
+- **`dump_report_numbers.py`**  
+  Legge i risultati JSON (`results_full.json`, `ablation_full.json`, `step2_summary.json`) e genera `report_numbers.txt`: prospetto leggibile di tutte le metriche, configurazioni migliori, RMSE, NRMSE, skill score, intervalli di confidenza e esiti dei test di significatività.
+
+- **`make_report_macros.py`**  
+  Produce lo stesso contenuto in formato macro LaTeX per l'importazione diretta nel documento.
+
+**Nota di verifica:** Queste utility permettono di controllare riga per riga che le cifre nel documento coincidano con quelle prodotte dall'esperimento.
+
+---
+
+## 🚀 Istruzioni di Esecuzione
+
+### Su Google Colab
+
+1. Apri il notebook **DL_Quantum.ipynb**
+2. Esegui le celle in sequenza, partendo dal setup dell'ambiente
+3. I dati verranno precaricati da Google Drive nelle prime celle
+
+### ⏱️ Tempi Stimati (GPU T4)
+
+- **Step 1** (Preprocessing): ~2 minuti
+- **Step 2** (Demo e training dimostrativo): ~5 minuti
+- **Step 3** (Sweep completo + Ablation): ~60–90 minuti
+
+---
+
+## 📄 Generazione del Report
+
+Il documento finale (in PDF) è redatto in LaTeX e importa automaticamente le tabelle dei risultati generati dalla pipeline:
+- `artifacts/step3/table1_L50.tex`
+- `artifacts/step3/table1_L100.tex`
+- `artifacts/step3/table_ablation.tex`
+- `artifacts/step3/table_hp_configs.tex`
+
+**Garanzia di coerenza:** Nessuna cifra è digitata manualmente nel testo; il documento non può quindi divergere dai risultati degli esperimenti. Il PDF compilato è incluso nel pacchetto.
+
+---
+
+## ✅ Riproducibilità
+
+La riproducibilità è garantita attraverso:
+
+- **Seed fissi** su tutte le operazioni stocastiche
+- **Determinismo TensorFlow** abilitato per operazioni CUDA
+- **Verifica empirica:** `tests/verify_reproducibility.py` confronta due esecuzioni indipendenti verificando:
+  - Identità esatta delle metriche
+  - Concordanza della Tabella 1
+  - Equivalenza bit-a-bit dei pesi salvati (hash MD5)
+
+- **Validazione dello scheduled sampling:** `tests/test_scheduled_sampling.py` verifica numericamente la proprietà a punto fisso dello scheduled sampling.
+
+---
+
+## 📋 Checklist di Esecuzione
+
+- [ ] Setup ambiente e GPU su Colab
+- [ ] Precaricamento dati da Google Drive
+- [ ] Step 1: Preprocessing
+- [ ] Step 2: Training demo
+- [ ] Step 3: Sweep e ablation
+- [ ] Verifica metriche in `artifacts/step3/`
+- [ ] Compilazione documento LaTeX (facoltativo)
+
+---
+
+## 📞 Contatti e Note
+
+Per domande sulla metodologia, replicazione degli esperimenti o accesso ai dataset integrali, contattare l'autore.
